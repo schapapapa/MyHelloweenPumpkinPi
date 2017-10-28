@@ -7,12 +7,14 @@
 void led_on(int n)
 {
 	digitalWrite(n, LOW);
+	printf("setting port to low %i \n",n);
 }
 
 //make led_n off
 void led_off(int n)
 {
 	digitalWrite(n, HIGH);
+	printf("setting port to high %i \n",n);
 }
 
 void loop (int argc, char *argv[]);
@@ -23,9 +25,9 @@ void waitBetweenChars();
 #define MAX 500
 #define SIZE 500
 
-#define WAITBETWEENCHARS 1000
-#define WAITLONG 600
-#define WAITSHORT 300
+#define WAITBETWEENCHARS 300
+#define WAITLONG 200
+#define WAITSHORT 100
 
 char charToUpper(char str)
 {
@@ -38,6 +40,12 @@ char charToUpper(char str)
 
 
 int main( int argc, char *argv[] )  {
+	
+	if(wiringPiSetup() == -1){ //when initialize wiring failed,print messageto screen
+		printf("setup wiringPi failed !\n ");
+		return 1; 
+	}
+
 	int i = 0;
  	for (i = 0; i < argc; i++) {
  		printf("\n%s\n", argv[i]);
@@ -66,6 +74,8 @@ int getArraySize(char *ptr)
 }
 
 void loop(int argc, char *argv[] ) {
+	
+
 	printf("Starting sequence \n");
 
 	int z;
@@ -73,7 +83,8 @@ void loop(int argc, char *argv[] ) {
  		printf("in loop showing arguments %s\n", argv[z]);
  	}
 	int sizeOfArray = argc;
-	int circuitPort = 0;
+	int circuitPort = 26;
+	pinMode(circuitPort, OUTPUT);
 	printf("array size %i \n" , sizeOfArray);
 
 	//return if no string was specified...
@@ -145,6 +156,7 @@ void loop(int argc, char *argv[] ) {
 							//we can only have "." or "-"
 							if (output[j][k] == '.') {
 								printf("found short \n");
+
 								led_on(circuitPort);
 								waitShortSequence();
 								led_off(circuitPort);
@@ -168,7 +180,9 @@ void loop(int argc, char *argv[] ) {
 				}
 			}
 		}
+		delay(5000);
 	}
+	
 }
 
 void waitShortSequence() {

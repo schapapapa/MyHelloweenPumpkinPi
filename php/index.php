@@ -4,43 +4,39 @@
 <title>GPIO Pumpkin Web Interface</title>
 </head>
 <body>
-Pumpkin Pi Steuerung:
+<b>Helloween Kürbis Webinterface:</b><br>
+<br>
 <form method="get" action="index.php">
-<input type="submit" value="17_Licht_ein" name="17_Licht_ein"/>
-<input type="submit" value="17_Licht_aus" name="17_Licht_aus"/>
-<input type="submit" value="25_Licht_ein" name="25_Licht_ein"/>
-<input type="submit" value="25_Licht-aus" name="25_Licht_aus"/>
-<input type="submit" value="PumpkinPi" name="PumpkinPi"/>
-<input type="submit" value="KillPumpkin" name="KillPumpkin"/>
+<b>Bitte Sequenz eingeben</b><br>
+<input type="input" value="" name="Eingabe"/><br><br>
+<input type="submit" value="Starte MorseCode" name="morse"/><br><br>
+<input type="submit" value="BlinkRandom" name="BlinkRandom"/><br><br>
+<input type="submit" value="KillPumpkin" name="KillPumpkin"/><br><br>
 </form>
 
 <?php
-$modeon17 = trim(@shell_exec("sudo /usr/local/bin/gpio -g mode 17 out"));
-$modeon25 = trim(@shell_exec("sudo /usr/local/bin/gpio -g mode 25 out"));
+$modeon26 = trim(@shell_exec("sudo /usr/local/bin/gpio -g mode 26 out"));
 
-if (isset($_GET["17_Licht_ein"])) {
-	$val = trim(@shell_exec("sudo /usr/local/bin/gpio -g write 17 0"));	
-	echo "Licht 17 ist nun an!";
+if (isset($_GET["morse"]) && $_GET["morse"]!="") {
+	$val = trim(@shell_exec("sudo pkill pumpkinpi"));	
+	$val = trim(@shell_exec("sudo pkill morsepi"));	
+	echo "Killed all other programs!   Code working on sequence: ". $_GET["Eingabe"];
+	flush();
+	$val = trim(@exec("sudo /home/development/scripts/morsepi " . $_GET["Eingabe"]));	
 }
-if (isset($_GET["17_Licht_aus"])) {
-	$val = trim(@shell_exec("sudo /usr/local/bin/gpio -g write 17 1"));	
-	echo "Licht 17 ist nun aus!";
-}
-if (isset($_GET["25_Licht_ein"])) {
-	$val = trim(@shell_exec("sudo /usr/local/bin/gpio -g write 25 0"));
-	echo "Licht 25 ist nun an!";	
-}
-if (isset($_GET["25_Licht_aus"])) {
-	$val = trim(@shell_exec("sudo /usr/local/bin/gpio -g write 25 1"));	
-	echo "Licht 25 ist nun aus!";
-}
-if (isset($_GET["PumpkinPi"])) {
-	$val = trim(@shell_exec("sudo /home/development/scripts/pumpkinpi"));	
-	echo "pumpkin working";
+if (isset($_GET["BlinkRandom"])&& $_GET["BlinkRandom"]!="") {
+	
+	echo "killing other processes ";
+	$val = trim(@shell_exec("sudo pkill pumpkinpi"));	
+	$val = trim(@shell_exec("sudo pkill morsepi"));	
+	flush();
+	$val = trim(@exec("sudo /home/development/scripts/pumpkinpi"));	
+	
 }
 if (isset($_GET["KillPumpkin"])) {
 	$val = trim(@shell_exec("sudo pkill pumpkinpi"));	
-	echo "pumpkin working";
+	$val = trim(@shell_exec("sudo pkill morsepi"));	
+	flush();
 }
 
 ?>
